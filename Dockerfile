@@ -61,11 +61,15 @@ RUN mkdir -p /etc/jupyter && \
     echo "# Configure ipykernel to allow stdin" >> /etc/jupyter/jupyter_server_config.py && \
     echo "c.IPKernelApp.allow_stdin = True" >> /etc/jupyter/jupyter_server_config.py
 
-# Install kernel spec with --allow-stdin flag
+# Install kernel spec and IPython kernel config
 COPY kernel.json /tmp/kernel.json
+COPY ipython_kernel_config.py /tmp/ipython_kernel_config.py
 RUN mkdir -p /opt/conda/share/jupyter/kernels/python3 && \
     cp /tmp/kernel.json /opt/conda/share/jupyter/kernels/python3/kernel.json && \
-    rm /tmp/kernel.json
+    rm /tmp/kernel.json && \
+    mkdir -p /etc/jupyter && \
+    cp /tmp/ipython_kernel_config.py /etc/jupyter/ipython_kernel_config.py && \
+    rm /tmp/ipython_kernel_config.py
 
 # Copy environment variable injection script to image (not mounted volume)
 COPY --chmod=755 inject-env.py /usr/local/bin/inject-env.py
