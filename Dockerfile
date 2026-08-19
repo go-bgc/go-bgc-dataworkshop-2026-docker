@@ -52,14 +52,8 @@ ENV PATH="/home/$NB_USER/.local/bin:${PATH}"
 # set the python used by reticulate
 ENV RETICULATE_PYTHON="/opt/conda/bin/python"
 
-# Copy stdin-fixing script to image (not mounted volume)
-COPY --chmod=755 inject-env.py /usr/local/bin/fix-stdin.py
-
-# Create a Jupyter startup script in a system location (not shadowed by user volume mount)
-RUN mkdir -p /usr/local/etc/jupyter/startup && \
-    echo '#!/usr/bin/env python3' > /usr/local/etc/jupyter/startup/00-fix-stdin.py && \
-    cat /usr/local/bin/fix-stdin.py | tail -n +2 >> /usr/local/etc/jupyter/startup/00-fix-stdin.py && \
-    chmod +x /usr/local/etc/jupyter/startup/00-fix-stdin.py.py
+# Enable stdin in Jupyter Server config
+RUN echo "c.ServerApp.allow_stdin = True" >> /etc/jupyter/jupyter_server_config.py
 
 # Copy environment variable injection script to image (not mounted volume)
 COPY --chmod=755 inject-env.py /usr/local/bin/inject-env.py
