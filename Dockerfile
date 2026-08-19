@@ -52,14 +52,21 @@ ENV PATH="/home/$NB_USER/.local/bin:${PATH}"
 # set the python used by reticulate
 ENV RETICULATE_PYTHON="/opt/conda/bin/python"
 
-# Copy stdin-fixing script to image (not mounted volume)
-COPY --chmod=755 fix-stdin.py /usr/local/bin/fix-stdin.py
+# Enable stdin support in ipykernel via Jupyter config
+RUN mkdir -p /etc/jupyter && cat >> /etc/jupyter/jupyter_server_config.py << 'EOF'
+# Enable stdin for interactive input() calls in Jupyter notebooks
+c.ServerApp.allow_stdin = True
+c.ServerApp.enable_terminal = True
 
-# Create a Jupyter startup script in a system location (not shadowed by user volume mount)
-RUN mkdir -p /usr/local/etc/jupyter/startup && \
-    echo '#!/usr/bin/env python3' > /usr/local/etc/jupyter/startup/00-fix-stdin.py && \
-    cat /usr/local/bin/fix-stdin.py | tail -n +2 >> /usr/local/etc/jupyter/startup/00-fix-stdin.py && \
-    chmod +x /usr/local/etc/jupyter/startup/00-fix-stdin.py
+# Configure ipykernel to allow stdin
+c.IPKernelApp.allow_stdin = True
+EOF
+
+# Install kernel spec with --allow-stdin flag
+COPY kernel.json /tmp/kernel.json
+RUN mkdir -p /opt/conda/share/jupyter/kernels/python3 && \
+    cp /tmp/kernel.json /opt/conda/share/jupyter/kernels/python3/kernel.json && \
+    rm /tmp/kernel.json
 
 # Copy environment variable injection script to image (not mounted volume)
 COPY --chmod=755 inject-env.py /usr/local/bin/inject-env.py
