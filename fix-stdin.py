@@ -13,7 +13,7 @@ try:
         # Call _input_request directly, ignoring the _allow_stdin flag
         return self._input_request(
             str(prompt),
-            self._get_shell_context_var(self._shell_parent_ident),
+            self._get_shell_context_var(self._shell_parent),
             self.get_parent("shell"),
             password=False,
         )
