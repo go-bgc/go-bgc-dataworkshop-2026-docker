@@ -53,14 +53,13 @@ ENV PATH="/home/$NB_USER/.local/bin:${PATH}"
 ENV RETICULATE_PYTHON="/opt/conda/bin/python"
 
 # Enable stdin support in ipykernel via Jupyter config
-RUN mkdir -p /etc/jupyter && cat >> /etc/jupyter/jupyter_server_config.py << 'EOF'
-# Enable stdin for interactive input() calls in Jupyter notebooks
-c.ServerApp.allow_stdin = True
-c.ServerApp.enable_terminal = True
-
-# Configure ipykernel to allow stdin
-c.IPKernelApp.allow_stdin = True
-EOF
+RUN mkdir -p /etc/jupyter && \
+    echo "# Enable stdin for interactive input() calls in Jupyter notebooks" >> /etc/jupyter/jupyter_server_config.py && \
+    echo "c.ServerApp.allow_stdin = True" >> /etc/jupyter/jupyter_server_config.py && \
+    echo "c.ServerApp.enable_terminal = True" >> /etc/jupyter/jupyter_server_config.py && \
+    echo "" >> /etc/jupyter/jupyter_server_config.py && \
+    echo "# Configure ipykernel to allow stdin" >> /etc/jupyter/jupyter_server_config.py && \
+    echo "c.IPKernelApp.allow_stdin = True" >> /etc/jupyter/jupyter_server_config.py
 
 # Install kernel spec with --allow-stdin flag
 COPY kernel.json /tmp/kernel.json

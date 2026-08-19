@@ -1,6 +1,9 @@
 {
  "display_name": "Python 3",
  "language": "python",
- "argv": ["python", "-m", "ipykernel_launcher", "-f", "{connection_file}", "--allow-stdin"],
- "env": {}
+ "argv": ["python", "-m", "ipykernel_launcher", "-f", "{connection_file}"],
+ "env": {},
+ "metadata": {
+   "debugger": true
+ }
 }
