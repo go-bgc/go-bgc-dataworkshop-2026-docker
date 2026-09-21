@@ -89,7 +89,7 @@ RUN pip install jupyter-rsession-proxy
 # Install Pip packages
 COPY --chown=$NB_UID:$NB_GID pip-packages.txt /home/jovyan/
 RUN pip install -r pip-packages.txt \
-  && jupyter server extension enable nbgitpuller jupyter_git jupyterlab-a11y-checker --sys-prefix \
+  && jupyter server extension enable nbgitpuller jupyter_git --sys-prefix \
   && pip cache purge
 
 # Install npm packages
